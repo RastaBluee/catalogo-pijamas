@@ -13,11 +13,11 @@ alter table public.catalogo_pijamas enable row level security;
 
 -- Público: solo ve las disponibles. Admin: ve y edita todo.
 create policy "catalogo_lectura_publica" on public.catalogo_pijamas
-  for select using (disponible or auth.jwt()->>'email' = 'admin.catalogo@pijamas.app');
+  for select using (disponible or auth.jwt()->>'email' = 'dome@pijamas.app');
 create policy "catalogo_admin_escritura" on public.catalogo_pijamas
   for all to authenticated
-  using (auth.jwt()->>'email' = 'admin.catalogo@pijamas.app')
-  with check (auth.jwt()->>'email' = 'admin.catalogo@pijamas.app');
+  using (auth.jwt()->>'email' = 'dome@pijamas.app')
+  with check (auth.jwt()->>'email' = 'dome@pijamas.app');
 
 -- Bucket público para imágenes
 insert into storage.buckets (id, name, public) values ('catalogo-pijamas', 'catalogo-pijamas', true)
@@ -25,5 +25,5 @@ insert into storage.buckets (id, name, public) values ('catalogo-pijamas', 'cata
 
 create policy "catalogo_img_admin" on storage.objects
   for all to authenticated
-  using (bucket_id = 'catalogo-pijamas' and auth.jwt()->>'email' = 'admin.catalogo@pijamas.app')
-  with check (bucket_id = 'catalogo-pijamas' and auth.jwt()->>'email' = 'admin.catalogo@pijamas.app');
+  using (bucket_id = 'catalogo-pijamas' and auth.jwt()->>'email' = 'dome@pijamas.app')
+  with check (bucket_id = 'catalogo-pijamas' and auth.jwt()->>'email' = 'dome@pijamas.app');
