@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo de Pijamas</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Catálogo de Pijamas</h1>
+  <p>Consulta disponibilidad directamente por WhatsApp</p>
+</header>
+<main id="grid" class="grid"><p class="vacio">Cargando...</p></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+async function cargar() {
+  const grid = document.getElementById("grid");
+  const { data, error } = await sb.from(TABLA).select("*").eq("disponible", true).order("id", { ascending: false });
+  if (error) { grid.innerHTML = '<p class="vacio">No se pudo cargar el catálogo.</p>'; return; }
+  if (!data.length) { grid.innerHTML = '<p class="vacio">Pronto tendremos nuevos modelos.</p>'; return; }
+
+  const base = location.origin + location.pathname;
+  grid.innerHTML = data.map(p => {
+    const link = `${base}?p=${p.id}`;
+    const msg = `Hola, me gustaria obtener mas informacion acerca de esta pijama: ${link}`;
+    return `<article class="card" id="p${p.id}">
+      <img src="${esc(p.imagen_url)}" alt="Pijama #${p.id}" loading="lazy">
+      <div class="info">
+        <span class="cod">Código #${p.id}</span>
+        ${p.descripcion ? `<span>${esc(p.descripcion)}</span>` : ""}
+        ${p.talla ? `<span class="talla">Talla: ${esc(p.talla)}</span>` : ""}
+        ${p.precio != null ? `<span class="precio">$${Number(p.precio).toFixed(2)}</span>` : ""}
+        <a class="btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}">Consultar vía WhatsApp</a>
+      </div>
+    </article>`;
+  }).join("");
+
+  const sel = new URLSearchParams(location.search).get("p");
+  const card = sel && document.getElementById("p" + sel);
+  if (card) { card.classList.add("destacada"); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
+}
+cargar();
+</script>
+</body>
+</html>

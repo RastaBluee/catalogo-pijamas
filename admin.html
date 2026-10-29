@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin Catálogo</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><h1>Panel administrativo</h1></header>
+<div class="panel">
+
+  <div id="login" class="box hidden">
+    <form id="fLogin">
+      <label>Correo</label><input type="email" id="email" required>
+      <label>Contraseña</label><input type="password" id="pass" required>
+      <button>Ingresar</button>
+      <p id="loginMsg" class="msg"></p>
+    </form>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="box">
+      <h3 style="margin-top:0">Nueva pijama</h3>
+      <form id="fNueva">
+        <label>Imagen *</label><input type="file" id="imagen" accept="image/*" required>
+        <label>Descripción</label><textarea id="descripcion" rows="2"></textarea>
+        <label>Precio</label><input type="number" id="precio" step="0.01" min="0">
+        <label>Talla</label><input type="text" id="talla">
+        <label><input type="checkbox" id="disponible" checked> Disponible</label>
+        <button id="btnGuardar">Guardar</button>
+        <p id="nuevaMsg" class="msg"></p>
+      </form>
+    </div>
+
+    <div class="box">
+      <h3 style="margin-top:0">Pijamas cargadas</h3>
+      <table><tbody id="lista"></tbody></table>
+      <button class="sec" id="salir">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+async function mostrar() {
+  const { data: { session } } = await sb.auth.getSession();
+  $("login").classList.toggle("hidden", !!session);
+  $("app").classList.toggle("hidden", !session);
+  if (session) listar();
+}
+
+$("fLogin").onsubmit = async e => {
+  e.preventDefault();
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value, password: $("pass").value });
+  $("loginMsg").textContent = error ? "Credenciales incorrectas" : "";
+  mostrar();
+};
+
+$("salir").onclick = async () => { await sb.auth.signOut(); mostrar(); };
+
+$("fNueva").onsubmit = async e => {
+  e.preventDefault();
+  const file = $("imagen").files[0];
+  $("btnGuardar").disabled = true;
+  $("nuevaMsg").textContent = "Subiendo...";
+  try {
+    const ruta = `${Date.now()}-${file.name.replace(/[^\w.]/g, "_")}`;
+    const up = await sb.storage.from(BUCKET).upload(ruta, file);
+    if (up.error) throw up.error;
+    const imagen_url = sb.storage.from(BUCKET).getPublicUrl(ruta).data.publicUrl;
+    const precio = $("precio").value;
+    const ins = await sb.from(TABLA).insert({
+      imagen_url,
+      descripcion: $("descripcion").value.trim() || null,
+      precio: precio === "" ? null : Number(precio),
+      talla: $("talla").value.trim() || null,
+      disponible: $("disponible").checked,
+    });
+    if (ins.error) throw ins.error;
+    e.target.reset(); $("disponible").checked = true;
+    $("nuevaMsg").textContent = "Guardado ✔";
+    listar();
+  } catch (err) {
+    $("nuevaMsg").textContent = "Error: " + err.message;
+  }
+  $("btnGuardar").disabled = false;
+};
+
+async function listar() {
+  const { data, error } = await sb.from(TABLA).select("*").order("id", { ascending: false });
+  if (error) { $("lista").innerHTML = `<tr><td>${esc(error.message)}</td></tr>`; return; }
+  $("lista").innerHTML = data.map(p => `<tr>
+    <td><img src="${esc(p.imagen_url)}"></td>
+    <td>#${p.id}<br>${esc(p.descripcion)}<br>${p.talla ? "Talla " + esc(p.talla) : ""} ${p.precio != null ? "$" + Number(p.precio).toFixed(2) : ""}</td>
+    <td><label><input type="checkbox" ${p.disponible ? "checked" : ""} onchange="toggle(${p.id}, this.checked)"> Disponible</label></td>
+    <td><button class="del" onclick="borrar(${p.id}, '${esc(p.imagen_url.split("/").pop())}')">Eliminar</button></td>
+  </tr>`).join("") || "<tr><td>Sin registros</td></tr>";
+}
+
+async function toggle(id, disponible) {
+  const { error } = await sb.from(TABLA).update({ disponible }).eq("id", id);
+  if (error) alert(error.message);
+}
+
+async function borrar(id, archivo) {
+  if (!confirm("¿Eliminar la pijama #" + id + "?")) return;
+  await sb.from(TABLA).delete().eq("id", id);
+  await sb.storage.from(BUCKET).remove([decodeURIComponent(archivo)]);
+  listar();
+}
+
+mostrar();
+</script>
+</body>
+</html>
