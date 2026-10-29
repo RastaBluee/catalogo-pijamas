@@ -57,7 +57,8 @@ async function mostrar() {
 
 $("fLogin").onsubmit = async e => {
   e.preventDefault();
-  const { error } = await sb.auth.signInWithPassword({ email: $("usuario").value.trim().toLowerCase() + "@pijamas.app", password: $("pass").value });
+  const u = $("usuario").value.trim().toLowerCase();
+  const { error } = await sb.auth.signInWithPassword({ email: u.includes("@") ? u : u + "@pijamas.app", password: $("pass").value });
   $("loginMsg").textContent = error ? "Credenciales incorrectas" : "";
   mostrar();
 };
