@@ -29,3 +29,23 @@ td img { width: 60px; height: 75px; object-fit: cover; border-radius: 6px; }
 td button { margin: 0; padding: 6px 10px; }
 .msg { color: #c0587e; margin-top: 8px; }
 .hidden { display: none; }
+
+/* Carousel */
+.carousel { position: relative; }
+.carousel img { cursor: zoom-in; display: block; }
+.flecha { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; margin: 0; padding: 0; border-radius: 50%; background: rgba(255,255,255,.55); color: #333; font-size: 14px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+.flecha:hover { background: rgba(255,255,255,.85); }
+.flecha.izq { left: 8px; }
+.flecha.der { right: 8px; }
+.contador { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,.5); color: #fff; font-size: .75rem; padding: 2px 8px; border-radius: 10px; }
+
+/* Modal */
+#modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; z-index: 100; }
+#modal.abierto { display: flex; }
+#modal .cerrar { position: absolute; top: 10px; right: 14px; margin: 0; background: none; font-size: 2.2rem; line-height: 1; color: #fff; }
+.modal-principal { position: relative; display: flex; align-items: center; justify-content: center; max-width: 100%; }
+#modalImg { max-width: min(90vw, 900px); max-height: 72vh; object-fit: contain; border-radius: 8px; }
+.modal-principal .flecha { width: 42px; height: 42px; font-size: 18px; }
+#thumbs { display: flex; gap: 8px; overflow-x: auto; max-width: 100%; padding-bottom: 4px; }
+#thumbs img { width: 64px; height: 80px; object-fit: cover; border-radius: 6px; cursor: pointer; opacity: .5; border: 2px solid transparent; flex: none; }
+#thumbs img.activa { opacity: 1; border-color: #fff; }

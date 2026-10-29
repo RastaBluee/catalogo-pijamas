@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Catálogo de Pijamas</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <header>
@@ -13,8 +13,18 @@
 </header>
 <main id="grid" class="grid"><p class="vacio">Cargando...</p></main>
 
+<div id="modal" onclick="if (event.target === this) cerrar()">
+  <button class="cerrar" onclick="cerrar()" aria-label="Cerrar">&times;</button>
+  <div class="modal-principal">
+    <button class="flecha izq" onclick="verModal(galerias[actual].idx - 1)" aria-label="Anterior">&#10094;</button>
+    <img id="modalImg" alt="Pijama">
+    <button class="flecha der" onclick="verModal(galerias[actual].idx + 1)" aria-label="Siguiente">&#10095;</button>
+  </div>
+  <div id="thumbs"></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="config.js?v=2"></script>
+<script src="config.js?v=3"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
@@ -28,8 +38,16 @@ async function cargar() {
   grid.innerHTML = data.map(p => {
     const link = `${base}?p=${p.id}`;
     const msg = `Hola, me gustaria obtener mas informacion acerca de esta pijama: ${link}`;
+    const imgs = p.imagenes?.length ? p.imagenes : [p.imagen_url];
+    galerias[p.id] = { imgs, idx: 0 };
+    const multi = imgs.length > 1;
     return `<article class="card" id="p${p.id}">
-      <img src="${esc(p.imagen_url)}" alt="Pijama #${p.id}" loading="lazy">
+      <div class="carousel">
+        <img id="img${p.id}" src="${esc(imgs[0])}" alt="Pijama #${p.id}" loading="lazy" onclick="abrir(${p.id})">
+        ${multi ? `<button class="flecha izq" onclick="mover(${p.id}, -1)" aria-label="Anterior">&#10094;</button>
+        <button class="flecha der" onclick="mover(${p.id}, 1)" aria-label="Siguiente">&#10095;</button>
+        <span class="contador" id="cont${p.id}">1/${imgs.length}</span>` : ""}
+      </div>
       <div class="info">
         <span class="cod">Código #${p.id}</span>
         ${p.descripcion ? `<span>${esc(p.descripcion)}</span>` : ""}
@@ -44,6 +62,48 @@ async function cargar() {
   const card = sel && document.getElementById("p" + sel);
   if (card) { card.classList.add("destacada"); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
 }
+
+const galerias = {};
+let actual = null;
+
+function mover(id, d) {
+  const g = galerias[id];
+  g.idx = (g.idx + d + g.imgs.length) % g.imgs.length;
+  document.getElementById("img" + id).src = g.imgs[g.idx];
+  document.getElementById("cont" + id).textContent = `${g.idx + 1}/${g.imgs.length}`;
+}
+
+function abrir(id) {
+  actual = id;
+  const g = galerias[id];
+  document.getElementById("thumbs").innerHTML = g.imgs.map((u, i) =>
+    `<img src="${esc(u)}" onclick="verModal(${i})" alt="Miniatura ${i + 1}">`).join("");
+  document.querySelectorAll("#modal .flecha").forEach(b => b.hidden = g.imgs.length < 2);
+  verModal(g.idx);
+  document.getElementById("modal").classList.add("abierto");
+  document.body.style.overflow = "hidden";
+}
+
+function verModal(i) {
+  const g = galerias[actual];
+  g.idx = (i + g.imgs.length) % g.imgs.length;
+  document.getElementById("modalImg").src = g.imgs[g.idx];
+  document.querySelectorAll("#thumbs img").forEach((t, j) => t.classList.toggle("activa", j === g.idx));
+  if (g.imgs.length > 1) mover(actual, 0);
+}
+
+function cerrar() {
+  document.getElementById("modal").classList.remove("abierto");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => {
+  if (!document.getElementById("modal").classList.contains("abierto")) return;
+  if (e.key === "Escape") cerrar();
+  if (e.key === "ArrowLeft") verModal(galerias[actual].idx - 1);
+  if (e.key === "ArrowRight") verModal(galerias[actual].idx + 1);
+});
+
 cargar();
 </script>
 </body>
