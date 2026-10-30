@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Admin Catálogo</title>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <header><h1>Panel administrativo</h1></header>
@@ -21,22 +21,26 @@
   </div>
 
   <div id="app" class="hidden">
-    <div class="box">
-      <h3 style="margin-top:0">Nueva pijama</h3>
+    <div class="box" id="formBox">
+      <h3 style="margin-top:0" id="tituloForm">Nueva pijama</h3>
       <form id="fNueva">
-        <label>Imágenes * (puedes seleccionar varias; la primera será la portada)</label><input type="file" id="imagen" accept="image/*" multiple required>
-        <label>Descripción</label><textarea id="descripcion" rows="2"></textarea>
-        <label>Precio</label><input type="number" id="precio" step="0.01" min="0">
-        <label>Talla</label><input type="text" id="talla">
-        <label><input type="checkbox" id="disponible" checked> Disponible</label>
+        <label>Imágenes * (toca una miniatura para hacerla portada)</label><input type="file" id="imagen" accept="image/*" multiple>
+        <div id="previas" class="previas"></div>
+        <label>Descripción</label><textarea id="descripcion" rows="4"></textarea>
+        <div class="fila">
+          <div><label>Precio</label><input type="number" id="precio" step="0.01" min="0"></div>
+          <div><label>Talla</label><input type="text" id="talla"></div>
+          <label class="check"><input type="checkbox" id="disponible" checked> Disponible</label>
+        </div>
         <button id="btnGuardar">Guardar</button>
+        <button type="button" class="sec hidden" id="btnCancelar">Cancelar</button>
         <p id="nuevaMsg" class="msg"></p>
       </form>
     </div>
 
     <div class="box">
       <h3 style="margin-top:0">Pijamas cargadas</h3>
-      <table><tbody id="lista"></tbody></table>
+      <div id="lista"></div>
       <button class="sec" id="btnWebp">Convertir imágenes antiguas a WebP</button>
       <p id="webpMsg" class="msg"></p>
       <button class="sec" id="salir">Cerrar sesión</button>
@@ -118,31 +122,94 @@ $("btnWebp").onclick = async () => {
 
 $("salir").onclick = async () => { await sb.auth.signOut(); mostrar(); };
 
+// Imágenes del formulario: { url } ya subidas o { file, url } nuevas (url = vista previa local)
+let items = [];
+let editando = null;
+
+function pintarPrevias() {
+  $("previas").innerHTML = items.map((it, i) => `<div class="previa${i ? "" : " portada"}" onclick="portada(${i})">
+    <img src="${esc(it.url)}" alt="Imagen ${i + 1}">
+    ${i ? "" : "<span>Portada</span>"}
+    <button type="button" onclick="event.stopPropagation(); quitar(${i})" aria-label="Quitar">&times;</button>
+  </div>`).join("");
+}
+
+function portada(i) { items.unshift(...items.splice(i, 1)); pintarPrevias(); }
+
+function quitar(i) {
+  const [it] = items.splice(i, 1);
+  if (it.file) URL.revokeObjectURL(it.url);
+  pintarPrevias();
+}
+
+$("imagen").onchange = e => {
+  items.push(...[...e.target.files].map(file => ({ file, url: URL.createObjectURL(file) })));
+  e.target.value = "";
+  pintarPrevias();
+};
+
+function limpiarForm() {
+  items.forEach(it => it.file && URL.revokeObjectURL(it.url));
+  items = []; editando = null;
+  $("fNueva").reset(); $("disponible").checked = true;
+  $("tituloForm").textContent = "Nueva pijama";
+  $("btnGuardar").textContent = "Guardar";
+  $("btnCancelar").classList.add("hidden");
+  pintarPrevias();
+}
+$("btnCancelar").onclick = () => { limpiarForm(); $("nuevaMsg").textContent = ""; };
+
+function editar(id) {
+  limpiarForm();
+  const p = cache.find(x => x.id === id);
+  editando = p;
+  items = fotos(p).map(url => ({ url }));
+  $("descripcion").value = p.descripcion ?? "";
+  $("precio").value = p.precio ?? "";
+  $("talla").value = p.talla ?? "";
+  $("disponible").checked = p.disponible;
+  $("tituloForm").textContent = `Editar pijama #${id}`;
+  $("btnGuardar").textContent = "Guardar cambios";
+  $("btnCancelar").classList.remove("hidden");
+  $("nuevaMsg").textContent = "";
+  pintarPrevias();
+  $("formBox").scrollIntoView({ behavior: "smooth" });
+}
+
 $("fNueva").onsubmit = async e => {
   e.preventDefault();
-  const files = [...$("imagen").files];
+  if (!items.length) { $("nuevaMsg").textContent = "Agrega al menos una imagen"; return; }
+  const nuevas = items.filter(it => it.file).length;
   $("btnGuardar").disabled = true;
   try {
     const imagenes = [];
-    for (const [i, file] of files.entries()) {
-      $("nuevaMsg").textContent = `Subiendo imagen ${i + 1} de ${files.length}...`;
-      const img = await comprimir(file);
-      const ruta = `${Date.now()}-${i}-${file.name.replace(/\.[^.]*$/, "").replace(/[^\w]/g, "_")}.${ext(img)}`;
+    let n = 0;
+    for (const [i, it] of items.entries()) {
+      if (!it.file) { imagenes.push(it.url); continue; }
+      $("nuevaMsg").textContent = `Subiendo imagen ${++n} de ${nuevas}...`;
+      const img = await comprimir(it.file);
+      const ruta = `${Date.now()}-${i}-${it.file.name.replace(/\.[^.]*$/, "").replace(/[^\w]/g, "_")}.${ext(img)}`;
       const up = await sb.storage.from(BUCKET).upload(ruta, img, { contentType: img.type });
       if (up.error) throw up.error;
       imagenes.push(sb.storage.from(BUCKET).getPublicUrl(ruta).data.publicUrl);
     }
     const precio = $("precio").value;
-    const ins = await sb.from(TABLA).insert({
+    const datos = {
       imagen_url: imagenes[0],
       imagenes,
       descripcion: $("descripcion").value.trim() || null,
       precio: precio === "" ? null : Number(precio),
       talla: $("talla").value.trim() || null,
       disponible: $("disponible").checked,
-    });
-    if (ins.error) throw ins.error;
-    e.target.reset(); $("disponible").checked = true;
+    };
+    const res = editando
+      ? await sb.from(TABLA).update(datos).eq("id", editando.id)
+      : await sb.from(TABLA).insert(datos);
+    if (res.error) throw res.error;
+    // Borra del storage las imágenes que se quitaron al editar
+    const quitadas = editando ? fotos(editando).filter(u => !imagenes.includes(u)) : [];
+    if (quitadas.length) await sb.storage.from(BUCKET).remove(quitadas.map(nombre));
+    limpiarForm();
     $("nuevaMsg").textContent = "Guardado ✔";
     listar();
   } catch (err) {
@@ -153,13 +220,19 @@ $("fNueva").onsubmit = async e => {
 
 async function listar() {
   const { data, error } = await sb.from(TABLA).select("*").order("id", { ascending: false });
-  if (error) { $("lista").innerHTML = `<tr><td>${esc(error.message)}</td></tr>`; return; }
-  $("lista").innerHTML = data.map(p => `<tr>
-    <td><img src="${esc(p.imagen_url)}"></td>
-    <td>#${p.id} · ${fotos(p).length} foto(s)<br>${esc(p.descripcion)}<br>${p.talla ? "Talla " + esc(p.talla) : ""} ${p.precio != null ? "$" + Number(p.precio).toFixed(2) : ""}</td>
-    <td><label><input type="checkbox" ${p.disponible ? "checked" : ""} onchange="toggle(${p.id}, this.checked)"> Disponible</label></td>
-    <td><button class="del" onclick="borrar(${p.id})">Eliminar</button></td>
-  </tr>`).join("") || "<tr><td>Sin registros</td></tr>";
+  if (error) { $("lista").innerHTML = `<p>${esc(error.message)}</p>`; return; }
+  $("lista").innerHTML = data.map(p => `<div class="item">
+    <div class="item-info">
+      <b>#${p.id}</b>${p.talla ? " · Talla " + esc(p.talla) : ""}${p.precio != null ? " · $" + Number(p.precio).toFixed(2) : ""}
+      ${p.descripcion ? `<div class="item-desc">${esc(p.descripcion)}</div>` : ""}
+    </div>
+    <div class="item-acc">
+      <label><input type="checkbox" ${p.disponible ? "checked" : ""} onchange="toggle(${p.id}, this.checked)"> Disponible</label>
+      <button onclick="editar(${p.id})">Editar</button>
+      <button class="del" onclick="borrar(${p.id})">Eliminar</button>
+    </div>
+    <div class="item-fotos">${fotos(p).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" loading="lazy" alt=""></a>`).join("")}</div>
+  </div>`).join("") || "<p>Sin registros</p>";
   cache = data;
 }
 
@@ -168,7 +241,8 @@ const fotos = p => p.imagenes?.length ? p.imagenes : [p.imagen_url];
 
 async function toggle(id, disponible) {
   const { error } = await sb.from(TABLA).update({ disponible }).eq("id", id);
-  if (error) alert(error.message);
+  if (error) return alert(error.message);
+  cache.find(x => x.id === id).disponible = disponible;
 }
 
 async function borrar(id) {
@@ -176,6 +250,7 @@ async function borrar(id) {
   const p = cache.find(x => x.id === id);
   await sb.from(TABLA).delete().eq("id", id);
   if (p) await sb.storage.from(BUCKET).remove(fotos(p).map(nombre));
+  if (editando?.id === id) limpiarForm();
   listar();
 }
 
