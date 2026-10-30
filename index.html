@@ -18,18 +18,86 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Catálogo de Pijamas: modelos disponibles">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,800&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="landing.css?v=3">
 </head>
 <body>
-<header>
-  <h1>Catálogo de Pijamas</h1>
-  <p>Consulta disponibilidad directamente por WhatsApp</p>
+<!-- Iconos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-luna" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
+  <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-compartir" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></symbol>
+  <symbol id="i-corazon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-estrella" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-flecha" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></symbol>
+</svg>
+
+<nav class="nav" id="nav">
+  <a class="marca" href="#"><svg><use href="#i-luna"/></svg>Catálogo de Pijamas</a>
+  <a class="nav-wa" id="navWa" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>WhatsApp</a>
+</nav>
+
+<header class="hero">
+  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  <div class="hero-in">
+    <span class="etiqueta aparece"><span class="punto"></span><span id="heroCuenta">Catálogo actualizado</span></span>
+    <h1 class="aparece">Pijamas lindas y <em>cómodas</em></h1>
+    <p class="aparece">Mira los modelos disponibles y pide el tuyo por WhatsApp en segundos.</p>
+    <div class="hero-cta aparece">
+      <a class="btn btn-pri" href="#catalogo">Ver modelos <svg><use href="#i-flecha"/></svg></a>
+      <a class="btn btn-sec" id="heroWa" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Escríbenos</a>
+    </div>
+    <div class="chips-hero aparece">
+      <span><svg><use href="#i-corazon"/></svg>Lindas y cómodas</span>
+      <span><svg><use href="#i-estrella"/></svg>Modelos nuevos</span>
+      <span><svg><use href="#i-wa"/></svg>Pedidos por WhatsApp</span>
+    </div>
+  </div>
 </header>
-<main id="grid" class="grid"><p class="vacio">Cargando...</p></main>
+
+<section class="catalogo" id="catalogo">
+  <div class="titulo-sec">
+    <h2>Modelos disponibles</h2>
+    <small id="resultado"></small>
+  </div>
+  <div class="filtros">
+    <label class="buscar">
+      <svg><use href="#i-buscar"/></svg>
+      <input id="buscar" type="search" placeholder="Buscar por código o descripción" aria-label="Buscar">
+    </label>
+    <select id="orden" class="orden" aria-label="Ordenar">
+      <option value="nuevo">Más nuevos</option>
+      <option value="barato">Menor precio</option>
+      <option value="caro">Mayor precio</option>
+    </select>
+    <div class="tallas" id="tallas"></div>
+  </div>
+  <main id="grid" class="grid"></main>
+</section>
+
+<section class="pasos">
+  <h2>¿Cómo pedir?</h2>
+  <ol>
+    <li><b>Elige tu modelo</b><span>Mira las fotos y encuentra la pijama que te encanta.</span></li>
+    <li><b>Escríbenos por WhatsApp</b><span>Toca “¡La quiero!” y el mensaje se envía con el modelo elegido.</span></li>
+    <li><b>Confirma tu pedido</b><span>Te respondemos con disponibilidad, talla y entrega.</span></li>
+  </ol>
+</section>
+
+<footer>
+  <a class="marca" href="#"><svg><use href="#i-luna"/></svg>Catálogo de Pijamas</a>
+  <div>Hecho con cariño · <span id="anio"></span></div>
+</footer>
+
+<a class="wa-flotante" id="waFlotante" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg><use href="#i-wa"/></svg></a>
+<div class="toast" id="toast"></div>
 
 <div id="modal" onclick="if (event.target === this) cerrar()">
   <button class="cerrar" onclick="cerrar()" aria-label="Cerrar">&times;</button>
-  <div class="modal-principal">
+  <div class="modal-principal" id="modalPrincipal">
     <button class="flecha izq" onclick="verModal(galerias[actual].idx - 1)" aria-label="Anterior">&#10094;</button>
     <img id="modalImg" alt="Pijama">
     <button class="flecha der" onclick="verModal(galerias[actual].idx + 1)" aria-label="Siguiente">&#10095;</button>
@@ -41,78 +109,204 @@
 <script src="config.js?v=3"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-
-async function cargar() {
-  const grid = document.getElementById("grid");
-  const { data, error } = await sb.from(TABLA).select("*").eq("disponible", true).order("id", { ascending: false });
-  if (error) { grid.innerHTML = '<p class="vacio">No se pudo cargar el catálogo.</p>'; return; }
-  if (!data.length) { grid.innerHTML = '<p class="vacio">Pronto tendremos nuevos modelos.</p>'; return; }
-
-  const base = location.origin + location.pathname;
-  grid.innerHTML = data.map(p => {
-    const link = `${base}?p=${p.id}`;
-    const msg = `Hola, me gustaria obtener mas informacion acerca de esta pijama: ${link}`;
-    const imgs = p.imagenes?.length ? p.imagenes : [p.imagen_url];
-    galerias[p.id] = { imgs, idx: 0 };
-    const multi = imgs.length > 1;
-    return `<article class="card" id="p${p.id}">
-      <div class="carousel">
-        <img id="img${p.id}" src="${esc(imgs[0])}" alt="Pijama #${p.id}" loading="lazy" onclick="abrir(${p.id})">
-        ${multi ? `<button class="flecha izq" onclick="mover(${p.id}, -1)" aria-label="Anterior">&#10094;</button>
-        <button class="flecha der" onclick="mover(${p.id}, 1)" aria-label="Siguiente">&#10095;</button>
-        <span class="contador" id="cont${p.id}">1/${imgs.length}</span>` : ""}
-      </div>
-      <div class="info">
-        <span class="cod">Código #${p.id}</span>
-        ${p.descripcion ? `<span>${esc(p.descripcion)}</span>` : ""}
-        ${p.talla ? `<span class="talla">Talla: ${esc(p.talla)}</span>` : ""}
-        ${p.precio != null ? `<span class="precio">$${Number(p.precio).toFixed(2)}</span>` : ""}
-        <a class="btn-wa" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}">Consultar vía WhatsApp</a>
-      </div>
-    </article>`;
-  }).join("");
-
-  const sel = new URLSearchParams(location.search).get("p");
-  const card = sel && document.getElementById("p" + sel);
-  if (card) { card.classList.add("destacada"); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
-}
+const $ = id => document.getElementById(id);
+const base = location.origin + location.pathname;
+const waLink = msg => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 
 const galerias = {};
 let actual = null;
+let productos = [];
+const filtro = { texto: "", talla: "", orden: "nuevo" };
+
+// Enlaces generales de WhatsApp
+["navWa", "heroWa", "waFlotante"].forEach(id => $(id).href = waLink("Hola, vi el catálogo de pijamas y me gustaría más información."));
+$("anio").textContent = new Date().getFullYear();
+
+// Barra superior con fondo al hacer scroll
+const nav = $("nav");
+addEventListener("scroll", () => nav.classList.toggle("scroll", scrollY > 20), { passive: true });
+
+// Esqueletos mientras carga
+$("grid").innerHTML = Array(8).fill(`<article class="card esqueleto"><div class="carousel"></div>
+  <div class="info"><div class="linea corta"></div><div class="linea"></div><div class="linea boton"></div></div></article>`).join("");
+
+const tallasDe = p => String(p.talla ?? "").split(/[,/]/).map(t => t.trim()).filter(Boolean);
+
+async function cargar() {
+  const { data, error } = await sb.from(TABLA).select("*").eq("disponible", true).order("id", { ascending: false });
+  if (error) { $("grid").innerHTML = '<p class="vacio">No se pudo cargar el catálogo.</p>'; return; }
+  productos = data;
+  if (!data.length) { $("grid").innerHTML = '<p class="vacio">Pronto tendremos nuevos modelos.</p>'; return; }
+
+  $("heroCuenta").textContent = `${data.length} ${data.length === 1 ? "modelo disponible" : "modelos disponibles"}`;
+  data.forEach(p => galerias[p.id] = { imgs: p.imagenes?.length ? p.imagenes : [p.imagen_url], idx: 0 });
+
+  const tallas = [...new Set(data.flatMap(tallasDe))];
+  $("tallas").innerHTML = tallas.length > 1
+    ? ["", ...tallas].map(t => `<button class="chip${t ? "" : " activo"}" data-talla="${esc(t)}">${t ? "Talla " + esc(t) : "Todas"}</button>`).join("")
+    : "";
+
+  render();
+
+  const sel = new URLSearchParams(location.search).get("p");
+  const card = sel && $("p" + sel);
+  if (card) { card.classList.add("destacada"); setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "center" }), 300); }
+}
+
+function render() {
+  const t = filtro.texto.toLowerCase();
+  let lista = productos.filter(p =>
+    (!t || String(p.id).includes(t.replace("#", "")) || String(p.descripcion ?? "").toLowerCase().includes(t)) &&
+    (!filtro.talla || tallasDe(p).includes(filtro.talla)));
+  const precio = p => p.precio ?? Infinity;
+  if (filtro.orden === "barato") lista = [...lista].sort((a, b) => precio(a) - precio(b));
+  if (filtro.orden === "caro") lista = [...lista].sort((a, b) => (b.precio ?? -1) - (a.precio ?? -1));
+
+  $("resultado").textContent = `${lista.length} de ${productos.length} modelos`;
+  if (!lista.length) {
+    $("grid").innerHTML = '<div class="vacio">No encontramos modelos con ese filtro.<br><button class="btn btn-sec" onclick="limpiar()">Ver todos</button></div>';
+    return;
+  }
+  $("grid").innerHTML = lista.map(tarjeta).join("");
+  revelar();
+}
+
+function tarjeta(p) {
+  const g = galerias[p.id];
+  const multi = g.imgs.length > 1;
+  const msg = `Hola, me gustaria obtener mas informacion acerca de esta pijama: ${base}?p=${p.id}`;
+  return `<article class="card revelar" id="p${p.id}">
+    <div class="carousel" data-id="${p.id}">
+      <img id="img${p.id}" src="${esc(g.imgs[g.idx])}" alt="Pijama #${p.id}" loading="lazy" onclick="abrir(${p.id})">
+      ${p.precio != null ? `<span class="precio-tag">$${Number(p.precio).toFixed(2)}</span>` : ""}
+      <button class="compartir" onclick="compartir(${p.id})" aria-label="Compartir"><svg><use href="#i-compartir"/></svg></button>
+      ${multi ? `<button class="flecha izq" onclick="mover(${p.id}, -1)" aria-label="Anterior">&#10094;</button>
+      <button class="flecha der" onclick="mover(${p.id}, 1)" aria-label="Siguiente">&#10095;</button>
+      <div class="puntos" id="puntos${p.id}">${g.imgs.map((_, i) => `<i class="${i === g.idx ? "on" : ""}"></i>`).join("")}</div>` : ""}
+    </div>
+    <div class="info">
+      <span class="cod">Código #${p.id}</span>
+      ${p.descripcion ? `<span class="desc">${esc(p.descripcion)}</span>` : ""}
+      ${p.talla ? `<span class="talla">Talla: ${esc(p.talla)}</span>` : ""}
+      <a class="btn-wa" target="_blank" rel="noopener" href="${waLink(msg)}"><svg><use href="#i-wa"/></svg>¡La quiero!</a>
+    </div>
+  </article>`;
+}
+
+// Aparición escalonada de las tarjetas al entrar en pantalla
+const obs = "IntersectionObserver" in window && new IntersectionObserver((entradas) => {
+  let n = 0;
+  entradas.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.style.setProperty("--d", `${Math.min(n++, 6) * 70}ms`);
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  });
+}, { rootMargin: "0px 0px -40px 0px" });
+
+function revelar() {
+  document.querySelectorAll(".card.revelar").forEach(c => {
+    // Al terminar se quitan las clases para que el efecto hover vuelva a funcionar
+    c.addEventListener("animationend", e => { if (e.animationName === "subir") c.classList.remove("revelar", "visible"); });
+    obs ? obs.observe(c) : c.classList.add("visible");
+  });
+}
+
+function limpiar() {
+  Object.assign(filtro, { texto: "", talla: "" });
+  $("buscar").value = "";
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("activo", c.dataset.talla === ""));
+  render();
+}
+
+$("buscar").addEventListener("input", e => { filtro.texto = e.target.value.trim(); render(); });
+$("orden").addEventListener("change", e => { filtro.orden = e.target.value; render(); });
+$("tallas").addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  filtro.talla = chip.dataset.talla;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("activo", c === chip));
+  render();
+});
+
+// Cambia la imagen con un pequeño fundido
+function cambiarImg(img, src) {
+  if (img.getAttribute("src") === src) return;
+  img.classList.add("cambiando");
+  setTimeout(() => {
+    img.onload = img.onerror = () => img.classList.remove("cambiando");
+    img.src = src;
+  }, 150);
+}
 
 function mover(id, d) {
   const g = galerias[id];
   g.idx = (g.idx + d + g.imgs.length) % g.imgs.length;
-  document.getElementById("img" + id).src = g.imgs[g.idx];
-  document.getElementById("cont" + id).textContent = `${g.idx + 1}/${g.imgs.length}`;
+  const img = $("img" + id);
+  if (!img) return;
+  cambiarImg(img, g.imgs[g.idx]);
+  $("puntos" + id)?.querySelectorAll("i").forEach((p, i) => p.classList.toggle("on", i === g.idx));
+}
+
+async function compartir(id) {
+  const url = `${base}?p=${id}`;
+  if (navigator.share) {
+    try { await navigator.share({ title: `Pijama #${id}`, text: "Mira esta pijama", url }); } catch {}
+    return;
+  }
+  try { await navigator.clipboard.writeText(url); aviso("Enlace copiado"); }
+  catch { prompt("Copia el enlace:", url); }
+}
+
+function aviso(texto) {
+  const t = $("toast");
+  t.textContent = texto;
+  t.classList.add("ver");
+  clearTimeout(aviso.t);
+  aviso.t = setTimeout(() => t.classList.remove("ver"), 2000);
 }
 
 function abrir(id) {
   actual = id;
   const g = galerias[id];
-  document.getElementById("thumbs").innerHTML = g.imgs.map((u, i) =>
+  $("thumbs").innerHTML = g.imgs.length < 2 ? "" : g.imgs.map((u, i) =>
     `<img src="${esc(u)}" onclick="verModal(${i})" alt="Miniatura ${i + 1}">`).join("");
   document.querySelectorAll("#modal .flecha").forEach(b => b.hidden = g.imgs.length < 2);
+  $("modalImg").src = g.imgs[g.idx];
   verModal(g.idx);
-  document.getElementById("modal").classList.add("abierto");
+  $("modal").classList.add("abierto");
   document.body.style.overflow = "hidden";
 }
 
 function verModal(i) {
   const g = galerias[actual];
   g.idx = (i + g.imgs.length) % g.imgs.length;
-  document.getElementById("modalImg").src = g.imgs[g.idx];
+  cambiarImg($("modalImg"), g.imgs[g.idx]);
   document.querySelectorAll("#thumbs img").forEach((t, j) => t.classList.toggle("activa", j === g.idx));
   if (g.imgs.length > 1) mover(actual, 0);
 }
 
 function cerrar() {
-  document.getElementById("modal").classList.remove("abierto");
+  $("modal").classList.remove("abierto");
   document.body.style.overflow = "";
 }
 
+// Deslizar con el dedo en tarjetas y en el modal
+let toqueX = null;
+document.addEventListener("touchstart", e => { toqueX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener("touchend", e => {
+  if (toqueX === null) return;
+  const dx = e.changedTouches[0].clientX - toqueX;
+  toqueX = null;
+  if (Math.abs(dx) < 40) return;
+  const dir = dx < 0 ? 1 : -1;
+  if (e.target.closest("#modalPrincipal") && galerias[actual]?.imgs.length > 1) return verModal(galerias[actual].idx + dir);
+  const car = e.target.closest(".carousel[data-id]");
+  if (car && galerias[car.dataset.id].imgs.length > 1) mover(+car.dataset.id, dir);
+});
+
 document.addEventListener("keydown", e => {
-  if (!document.getElementById("modal").classList.contains("abierto")) return;
+  if (!$("modal").classList.contains("abierto")) return;
   if (e.key === "Escape") cerrar();
   if (e.key === "ArrowLeft") verModal(galerias[actual].idx - 1);
   if (e.key === "ArrowRight") verModal(galerias[actual].idx + 1);
