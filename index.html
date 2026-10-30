@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,800&family=Nunito:wght@400;600;700;800&display=swap">
-<link rel="stylesheet" href="landing.css?v=3">
+<link rel="stylesheet" href="landing.css?v=4">
 </head>
 <body>
 <!-- Iconos reutilizables -->
@@ -33,6 +33,7 @@
   <symbol id="i-corazon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
   <symbol id="i-estrella" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
   <symbol id="i-flecha" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></symbol>
+  <symbol id="i-regalo" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
 </svg>
 
 <nav class="nav" id="nav">
@@ -104,6 +105,36 @@
   </div>
   <div id="thumbs"></div>
 </div>
+
+<!-- Promo navideña: aparece al entrar y al cerrarla queda escondida en el borde derecho -->
+<div class="nv" id="nv" role="dialog" aria-modal="true" aria-labelledby="nvTitulo">
+  <div class="nv-tarjeta">
+    <div class="nv-nieve" id="nvNieve" aria-hidden="true"></div>
+    <div class="nv-luces" id="nvLuces" aria-hidden="true"></div>
+    <button class="nv-cerrar" id="nvCerrar" aria-label="Cerrar">&times;</button>
+    <div class="nv-contenido">
+      <div class="nv-regalo"><svg><use href="#i-regalo"/></svg></div>
+      <span class="nv-etiqueta">Temporada navideña</span>
+      <h2 id="nvTitulo">¿Ya tienes tu look para <em>Navidad</em>?</h2>
+      <p>Elige lo que te encanta en SHEIN y nosotros hacemos el pedido por ti. Tú solo preocúpate por estrenar.</p>
+      <div class="nv-cuenta" id="nvCuenta"><b id="nvDias"></b><span id="nvDiasTxt"></span></div>
+      <p class="nv-pista">Las tallas favoritas vuelan en diciembre 👀 Pide con tiempo y llega antes de la cena navideña.</p>
+      <a class="btn-wa nv-cta" id="nvCta" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Quiero mi look navideño</a>
+      <button class="nv-despues" id="nvDespues">Ver el catálogo primero</button>
+    </div>
+  </div>
+</div>
+
+<aside class="nv-lateral" id="nvLateral">
+  <div class="nv-lat-in">
+    <button class="nv-asa" id="nvAsa" aria-label="Ver promoción navideña"><svg><use href="#i-regalo"/></svg><span>Navidad</span></button>
+    <div class="nv-lat-cuerpo">
+      <b>¿Ya tienes tu look navideño?</b>
+      <small id="nvLatDias"></small>
+      <a class="btn-wa" id="nvLatCta" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Pedir ahora</a>
+    </div>
+  </div>
+</aside>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=3"></script>
@@ -313,6 +344,78 @@ document.addEventListener("keydown", e => {
 });
 
 cargar();
+
+// ---------- Promo navideña ----------
+const nv = $("nv"), nvLat = $("nvLateral");
+const conHover = matchMedia("(hover: hover)");
+
+// Días que faltan para Nochebuena (pasada esa fecha, para Año Nuevo)
+function diasFiesta() {
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  let meta = new Date(hoy.getFullYear(), 11, 24), nombre = "Nochebuena";
+  if (hoy > meta) { meta = new Date(hoy.getFullYear(), 11, 31); nombre = "Año Nuevo"; }
+  return { dias: Math.round((meta - hoy) / 864e5), nombre };
+}
+
+const { dias, nombre } = diasFiesta();
+if (dias) {
+  $("nvDias").textContent = dias;
+  $("nvDiasTxt").innerHTML = `${dias === 1 ? "día" : "días"} para<br>${nombre}`;
+  $("nvLatDias").textContent = `${dias === 1 ? "Falta 1 día" : `Faltan ${dias} días`} para ${nombre}`;
+} else {
+  $("nvCuenta").innerHTML = `<span>¡Hoy es ${nombre}!</span>`;
+  $("nvLatDias").textContent = `¡Hoy es ${nombre}!`;
+}
+$("nvCta").href = $("nvLatCta").href = waLink("¡Hola! 🎄 Quiero estrenar en Navidad. ¿Me ayudan a hacer mi pedido de SHEIN?");
+
+// Nieve y guirnalda de luces
+const azar = (a, b) => (a + Math.random() * (b - a)).toFixed(2);
+$("nvNieve").innerHTML = Array.from({ length: 24 }, () =>
+  `<i style="--x:${azar(0, 100)}%;--s:${azar(2, 6)}px;--o:${azar(.4, .95)};--t:${azar(5, 11)}s;--d:-${azar(0, 10)}s;--dx:${azar(-30, 30)}px"></i>`).join("");
+const cuelga = x => 3 + 10 * Math.sin(Math.PI * ((x * 3 / 100) % 1)); // tres tramos colgantes
+const colores = ["#ff4d5e", "#ffd34d", "#3ddc84", "#5ec8ff", "#ff8ad8"];
+$("nvLuces").innerHTML =
+  `<svg class="nv-cable" viewBox="0 0 100 20" preserveAspectRatio="none"><polyline points="${Array.from({ length: 101 }, (_, x) => `${x},${cuelga(x).toFixed(2)}`).join(" ")}"/></svg>` +
+  Array.from({ length: 13 }, (_, i) => {
+    const x = 2 + i * 8;
+    return `<i style="left:${x}%;top:${(cuelga(x) * 1.7).toFixed(1)}px;--c:${colores[i % colores.length]};--d:${(i % 2) * .7}s"></i>`;
+  }).join("");
+
+function abrirNv() {
+  if ($("modal").classList.contains("abierto")) return setTimeout(abrirNv, 1500);
+  nvLat.classList.remove("ver", "abierta");
+  nv.classList.remove("minimizando");
+  nv.classList.add("ver");
+}
+
+// Al cerrar, la tarjeta "vuela" hacia el borde derecho y aparece la pestaña
+function minimizarNv() {
+  if (!nv.classList.contains("ver") || nv.classList.contains("minimizando")) return;
+  nv.classList.add("minimizando");
+  try { sessionStorage.setItem("nvVisto", "1"); } catch {}
+  setTimeout(() => { nv.classList.remove("ver", "minimizando"); nvLat.classList.add("ver"); }, 520);
+}
+
+nv.addEventListener("click", e => { if (e.target === nv) minimizarNv(); });
+$("nvCerrar").addEventListener("click", minimizarNv);
+$("nvDespues").addEventListener("click", minimizarNv);
+$("nvCta").addEventListener("click", minimizarNv);
+// Con mouse la pestaña se despliega al pasar por encima (CSS) y el clic reabre la promo; en táctil, el toque la despliega
+$("nvAsa").addEventListener("click", () => conHover.matches ? abrirNv() : nvLat.classList.toggle("abierta"));
+document.addEventListener("click", e => { if (!nvLat.contains(e.target)) nvLat.classList.remove("abierta"); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  minimizarNv();
+  nvLat.classList.remove("abierta");
+});
+
+// Aparece poco después de que la página termina de cargar (una vez por sesión)
+function iniciarNv() {
+  let visto = false;
+  try { visto = sessionStorage.getItem("nvVisto") === "1"; } catch {}
+  setTimeout(() => visto ? nvLat.classList.add("ver") : abrirNv(), visto ? 600 : 1500);
+}
+document.readyState === "complete" ? iniciarNv() : addEventListener("load", iniciarNv);
 </script>
 </body>
 </html>

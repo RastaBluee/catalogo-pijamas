@@ -200,6 +200,95 @@ footer .marca { justify-content: center; margin-bottom: 6px; }
 #thumbs img:hover { opacity: .8; }
 #thumbs img.activa { opacity: 1; outline-color: #fff; transform: translateY(-2px); }
 
+/* ---------- Promo navideña ---------- */
+.nv { position: fixed; inset: 0; z-index: 90; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(40, 8, 18, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: background .45s, backdrop-filter .45s; }
+.nv.ver { display: flex; animation: nvFondo .4s ease both; }
+.nv.minimizando { background: rgba(40, 8, 18, 0); backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); pointer-events: none; }
+@keyframes nvFondo { from { background-color: rgba(40, 8, 18, 0); } }
+
+.nv-tarjeta { position: relative; width: min(400px, 100%); max-height: calc(100dvh - 32px); overflow: hidden auto; padding: 52px 26px 20px; border-radius: 26px; text-align: center; color: #fff; background: radial-gradient(120% 60% at 50% 0%, #e2253f 0%, transparent 65%), linear-gradient(165deg, #c8102e 0%, #8e0c25 55%, #5a0a1b 100%); box-shadow: 0 30px 70px -20px rgba(90, 10, 27, .85), inset 0 0 0 1px rgba(255, 255, 255, .12); animation: nvEntra .75s cubic-bezier(.34, 1.56, .64, 1) both; scrollbar-width: none; }
+.nv-tarjeta::-webkit-scrollbar { display: none; }
+@keyframes nvEntra { 0% { opacity: 0; transform: translateY(50px) scale(.7) rotate(-4deg); } 50% { opacity: 1; } 100% { transform: none; } }
+.nv.minimizando .nv-tarjeta { animation: nvSale .5s cubic-bezier(.55, 0, .75, .2) forwards; }
+@keyframes nvSale { to { opacity: 0; transform: translateX(min(60vw, 520px)) scale(.12) rotate(14deg); } }
+.nv-contenido { position: relative; z-index: 1; }
+
+/* Nieve */
+.nv-nieve { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.nv-nieve i { position: absolute; top: -10px; left: var(--x); width: var(--s); height: var(--s); border-radius: 50%; background: #fff; opacity: var(--o); animation: nvNieve var(--t) linear var(--d) infinite; }
+@keyframes nvNieve { to { transform: translate(var(--dx), 640px); } }
+
+/* Guirnalda de luces */
+.nv-luces { position: absolute; top: 0; left: 0; right: 0; height: 34px; pointer-events: none; z-index: 1; }
+.nv-cable { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nv-cable polyline { fill: none; stroke: #1d5a33; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.nv-luces i { position: absolute; width: 9px; height: 13px; margin: 1px 0 0 -4.5px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; background: var(--c); box-shadow: 0 0 10px 2px var(--c); animation: nvFoco 1.4s ease-in-out var(--d) infinite alternate; }
+.nv-luces i::before { content: ""; position: absolute; top: -3px; left: 2px; width: 5px; height: 4px; border-radius: 1px; background: #1d5a33; }
+@keyframes nvFoco { from { opacity: .35; box-shadow: 0 0 2px 0 var(--c); } }
+
+.nv-cerrar { position: absolute; top: 40px; right: 12px; z-index: 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, .14); color: #fff; font-size: 1.6rem; line-height: 1; transition: background .2s, transform .3s var(--ease); }
+.nv-cerrar:hover { background: rgba(255, 255, 255, .28); transform: rotate(90deg); }
+
+.nv-regalo { position: relative; display: grid; place-items: center; width: 74px; height: 74px; margin: 0 auto 14px; border-radius: 50%; background: linear-gradient(145deg, #ffe08a, #f5b829); color: #8e0c25; font-size: 38px; box-shadow: 0 10px 24px -8px rgba(245, 184, 41, .8), 0 0 0 6px rgba(255, 224, 138, .18); animation: nvSalta 2.6s ease-in-out .9s infinite; }
+.nv-regalo svg { stroke-width: 1.8; }
+.nv-regalo::before, .nv-regalo::after { content: "✦"; position: absolute; color: #ffe08a; animation: nvBrilla 1.8s ease-in-out infinite; }
+.nv-regalo::before { top: -6px; right: -12px; font-size: 18px; }
+.nv-regalo::after { bottom: 2px; left: -16px; font-size: 12px; animation-delay: .9s; }
+@keyframes nvSalta { 0%, 60%, 100% { transform: none; } 66% { transform: translateY(-8px) rotate(-10deg); } 72% { transform: translateY(0) rotate(8deg); } 78% { transform: rotate(-5deg); } 84% { transform: rotate(2deg); } }
+@keyframes nvBrilla { 0%, 100% { opacity: .2; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.15); } }
+
+.nv-etiqueta { display: inline-block; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .14); color: #ffd98a; font-size: .74rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.nv h2 { margin: 12px 0 10px; font-family: "Fraunces", Georgia, serif; font-weight: 800; font-size: clamp(1.55rem, 6vw, 1.95rem); line-height: 1.1; letter-spacing: -.01em; }
+.nv h2 em { font-style: italic; background: linear-gradient(100deg, #ffe9a8, #ffc93c 60%, #ffe9a8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.nv p { max-width: 330px; margin: 0 auto; color: rgba(255, 255, 255, .9); font-size: .98rem; line-height: 1.5; }
+
+.nv-cuenta { display: inline-flex; align-items: center; gap: 10px; margin: 18px auto 12px; padding: 10px 18px; border: 1px dashed rgba(255, 217, 138, .55); border-radius: 16px; background: rgba(0, 0, 0, .18); }
+.nv-cuenta b { font-family: "Fraunces", Georgia, serif; font-size: 2.3rem; font-weight: 800; line-height: 1; color: #ffd34d; text-shadow: 0 0 18px rgba(255, 211, 77, .45); animation: nvLatido 1.6s ease-in-out infinite; }
+.nv-cuenta span { text-align: left; font-size: .8rem; font-weight: 800; line-height: 1.2; letter-spacing: .04em; text-transform: uppercase; }
+@keyframes nvLatido { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.12); } 30% { transform: scale(1); } 45% { transform: scale(1.08); } }
+.nv p.nv-pista { margin-bottom: 18px; color: rgba(255, 255, 255, .75); font-size: .88rem; }
+
+.nv-cta { width: 100%; padding: 15px 12px; border-radius: 16px; font-size: 1.08rem; animation: latido 2s infinite; }
+.nv-despues { margin-top: 10px; padding: 6px 10px; background: none; color: rgba(255, 255, 255, .7); font-size: .88rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; transition: color .2s; }
+.nv-despues:hover { color: #fff; }
+
+/* Pestaña escondida en el borde derecho */
+.nv-lateral { position: fixed; right: 0; top: 50%; z-index: 55; display: none; --asa: 46px; transform: translate(calc(100% - var(--asa)), -50%); transition: transform .5s var(--ease); filter: drop-shadow(0 10px 20px rgba(90, 10, 27, .35)); }
+.nv-lateral.ver { display: block; }
+.nv-lateral.abierta, .nv-lateral:has(:focus-visible) { transform: translate(0, -50%); }
+@media (hover: hover) { .nv-lateral:hover { transform: translate(0, -50%); } }
+.nv-lat-in { display: flex; align-items: stretch; animation: nvAsaEntra .7s var(--ease) both, nvEmpuja 6s ease-in-out 2s infinite; }
+.nv-lateral:hover .nv-lat-in, .nv-lateral.abierta .nv-lat-in { animation: none; }
+@keyframes nvAsaEntra { from { transform: translateX(80px); } }
+@keyframes nvEmpuja { 0%, 88%, 100% { transform: none; } 92% { transform: translateX(-10px); } 96% { transform: translateX(-3px); } }
+
+.nv-asa { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: var(--asa); padding: 14px 0; border-radius: 16px 0 0 16px; background: linear-gradient(180deg, #d11a36, #8e0c25); color: #fff; }
+.nv-asa svg { font-size: 1.35rem; color: #ffd34d; animation: nvSalta 2.6s ease-in-out infinite; }
+.nv-asa span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.nv-asa::after { content: ""; position: absolute; top: 7px; left: 7px; width: 9px; height: 9px; border-radius: 50%; background: #ffd34d; animation: nvPunto 1.6s infinite; }
+@keyframes nvPunto { 0% { box-shadow: 0 0 0 0 rgba(255, 211, 77, .7); } 70%, 100% { box-shadow: 0 0 0 9px rgba(255, 211, 77, 0); } }
+
+.nv-lat-cuerpo { display: flex; flex-direction: column; justify-content: center; gap: 6px; width: 220px; padding: 14px 16px; background: linear-gradient(165deg, #b30f2a, #7a0c22); color: #fff; }
+.nv-lat-cuerpo b { font-family: "Fraunces", Georgia, serif; font-size: 1.05rem; line-height: 1.15; }
+.nv-lat-cuerpo small { color: #ffd98a; font-size: .82rem; font-weight: 700; }
+.nv-lat-cuerpo .btn-wa { margin-top: 4px; padding: 9px 10px; border-radius: 12px; font-size: .92rem; }
+
+@media (max-width: 560px) {
+  .nv-tarjeta { padding: 48px 20px 16px; border-radius: 22px; }
+  .nv-regalo { width: 62px; height: 62px; font-size: 32px; margin-bottom: 12px; }
+  .nv p { font-size: .94rem; }
+  .nv-cuenta { margin: 14px auto 10px; }
+  .nv-cuenta b { font-size: 2rem; }
+  /* En celular la pestaña va sobre el botón de WhatsApp para no tapar el centro */
+  .nv-lateral { --asa: 40px; top: auto; bottom: 92px; transform: translateX(calc(100% - var(--asa))); }
+  .nv-lateral.abierta, .nv-lateral:has(:focus-visible) { transform: none; }
+  @media (hover: hover) { .nv-lateral:hover { transform: none; } }
+  .nv-asa { padding: 12px 0; gap: 6px; }
+  .nv-asa span { font-size: .68rem; }
+  .nv-lat-cuerpo { width: 200px; padding: 12px 14px; }
+}
+@media (max-height: 560px) and (max-width: 900px) { .nv-regalo { display: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .blob { animation: none; }
